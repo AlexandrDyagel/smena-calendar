@@ -1,0 +1,50 @@
+{
+  "name": "smena-calendar",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Календарь сменных графиков — планирование циклических смен, переопределения дней, отчёты и экспорт",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "build:only": "vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit",
+    "check:logic": "node --import ./scripts/register.mjs ./scripts/logic-check.ts",
+    "check:ui": "vite build --ssr scripts/render-check.ts --outDir .tmp/render-check --logLevel warn && node .tmp/render-check/render-check.js",
+    "check:dom": "vite build --config vite.dom-check.config.ts && node .tmp/dom-check/dom-check.mjs",
+    "check": "npm run typecheck && npm run check:logic && npm run check:ui && npm run check:dom",
+    "android:add": "cap add android",
+    "android:sync": "npm run build && cap sync android",
+    "android:open": "cap open android",
+    "android:apk": "npm run android:sync && cd android && gradlew.bat assembleDebug",
+    "android:run": "npm run android:sync && cap run android",
+    "assets:generate": "node scripts/brand-assets.mjs"
+  },
+  "dependencies": {
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/filesystem": "^8.1.4",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/preferences": "^8.0.1",
+    "@capacitor/share": "^8.0.3",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4",
+    "dayjs": "^1.11.13",
+    "pinia": "^3.0.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "@tailwindcss/vite": "^4.1.11",
+    "@types/node": "^24.0.0",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "jsdom": "^30.1.1",
+    "tailwindcss": "^4.1.11",
+    "typescript": "~5.9.2",
+    "vite": "^7.0.0",
+    "vue-tsc": "^3.0.0"
+  }
+}

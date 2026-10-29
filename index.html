@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Календарь сменных графиков: циклические шаблоны, переопределения дней, отчёты и экспорт" />
+    <meta name="theme-color" content="#2563eb" />
+    <title>Календарь сменных графиков</title>
+    <script>
+      // Применяем тему до первой отрисовки, чтобы не было «вспышки» белого экрана.
+      try {
+        var raw = localStorage.getItem('smena-calendar:ui')
+        var theme = raw ? JSON.parse(raw).theme : 'system'
+        var prefersDark =
+          window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (theme === 'dark' || (theme !== 'light' && prefersDark)) {
+          document.documentElement.classList.add('dark')
+        }
+      } catch (e) {
+        /* некорректные данные в хранилище не должны ломать загрузку */
+      }
+
+      // Страховка: если приложение не запустилось (ошибка загрузки бандла),
+      // заставка всё равно уберётся, чтобы не закрывать интерфейс навсегда.
+      window.setTimeout(function () {
+        var splash = document.getElementById('app-splash')
+        if (!splash) return
+        splash.classList.add('app-splash--hidden')
+        window.setTimeout(function () {
+          splash.remove()
+        }, 400)
+      }, 8000)
+    </script>
+    <style>
+      /* Заставка отрисовывается до загрузки бандла, поэтому лежит прямо в HTML. */
+      #app-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        padding: 24px;
+        text-align: center;
+        background: #2563eb;
+        color: #ffffff;
+        transition: opacity 0.35s ease, visibility 0.35s ease;
+      }
+
+      #app-splash.app-splash--hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .app-splash__logo {
+        width: 132px;
+        height: 132px;
+        filter: drop-shadow(0 18px 32px rgba(15, 23, 42, 0.28));
+        animation: app-splash-breathe 2.6s ease-in-out infinite;
+      }
+
+      .app-splash__title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      }
+
+      .app-splash__subtitle {
+        margin: 0;
+        font-size: 13px;
+        opacity: 0.82;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      }
+
+      .app-splash__dots {
+        display: inline-flex;
+        gap: 6px;
+        margin-top: 4px;
+      }
+
+      .app-splash__dots i {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: app-splash-dots 1.4s ease-in-out infinite;
+      }
+
+      .app-splash__dots i:nth-child(2) {
+        animation-delay: 0.18s;
+      }
+
+      .app-splash__dots i:nth-child(3) {
+        animation-delay: 0.36s;
+      }
+
+      /* «Дыхание» логотипа: плавное увеличение и лёгкое затухание. */
+      @keyframes app-splash-breathe {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.06);
+          opacity: 0.86;
+        }
+      }
+
+      @keyframes app-splash-dots {
+        0%,
+        80%,
+        100% {
+          opacity: 0.25;
+          transform: translateY(0);
+        }
+        40% {
+          opacity: 1;
+          transform: translateY(-3px);
+        }
+      }
+
+      /* Уважаем системную настройку «уменьшить движение». */
+      @media (prefers-reduced-motion: reduce) {
+        .app-splash__logo,
+        .app-splash__dots i {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <div id="app-splash" role="status" aria-live="polite">
+      <div class="app-splash__logo">
+        <svg viewBox="0 0 1024 1024" width="132" height="132" role="img" aria-label="Календарь смен">
+          <rect x="0" y="0" width="1024" height="1024" rx="225" fill="#2563eb" />
+          <rect x="328" y="164" width="102" height="164" rx="51" fill="#ffffff" />
+          <rect x="594" y="164" width="102" height="164" rx="51" fill="#ffffff" />
+          <rect x="174" y="266" width="676" height="573" rx="92" fill="#ffffff" />
+          <rect x="256" y="430" width="512" height="46" rx="23" fill="#93c5fd" />
+          <rect x="256" y="573" width="143" height="143" rx="36" fill="#16a34a" />
+          <rect x="430" y="573" width="143" height="143" rx="36" fill="#2563eb" />
+          <rect x="604" y="573" width="143" height="143" rx="36" fill="#7c3aed" />
+        </svg>
+      </div>
+      <p class="app-splash__title">Календарь смен</p>
+      <p class="app-splash__subtitle">Сменные графики, переопределения и отчёты</p>
+      <span class="app-splash__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
